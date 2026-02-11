@@ -22,8 +22,13 @@ form.addEventListener("submit", async (e) => {
     try {
         const res = await fetch(API_URL, {
             method: "POST",
-            body: JSON.stringify({ Player, Score })
-        });
+            body: JSON.stringify({
+                secret: "K7xP9QmA4Zr2FvL8EwYB0dS6C1H5J",
+                Player,Score
+            })
+
+        //     body: JSON.stringify({ Player, Score })
+        // });
 
         const data = await res.json();
         statusEl.textContent = data.message;
@@ -33,4 +38,5 @@ form.addEventListener("submit", async (e) => {
         statusEl.textContent = "Error saving score";
     }
 });
+
 
