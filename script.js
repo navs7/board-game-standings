@@ -1,38 +1,17 @@
-const API_URL = "https://script.google.com/macros/s/AKfycbya-Rq7FScB8fRULWNsZx9tEJFe9bSwr2uxYZj6XWGgQD--n5B35who_E30lO0CDuo/exec";
+const API_URL = CONFIG.API_URL;
+const board = document.getElementById("board");
 
 async function loadScores() {
-    const res = await fetch(API_URL);
-    let data = await res.json();
+  const res = await fetch(API_URL);
+  const data = await res.json();
 
-    // Convert Score to number and sort descending
-    data = data
-        .map(p => ({ ...p, Score: Number(p.Score) }))
-        .sort((a, b) => b.Score - a.Score);
-
-    const tbody = document.querySelector("#scoreTable tbody");
-    tbody.innerHTML = "";
-
-    data.forEach((player, index) => {
-        const row = document.createElement("tr");
-
-        if (index === 0) row.classList.add("leader");
-
-        row.innerHTML = `
-            <td>${index + 1}</td>
-            <td>${player.Player}</td>
-            <td>${player.Score}</td>
-        `;
-
-        tbody.appendChild(row);
-    });
+  board.innerHTML = "";
+  data.forEach(p => {
+    const div = document.createElement("div");
+    div.textContent = `${p.Player}: ${p.Score}`;
+    board.appendChild(div);
+  });
 }
 
-// Initial load
+setInterval(loadScores, 3000);
 loadScores();
-
-// Auto update every 30 seconds
-setInterval(loadScores, 30000);
-
-
-
-

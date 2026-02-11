@@ -1,25 +1,26 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <title>Flip 7 – Admin</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="admin.css">
+  <title>Admin</title>
+  <link rel="stylesheet" href="admin.css">
 </head>
 <body>
 
 <div class="container">
-    <h1>Flip 7 – Score Admin</h1>
+  <h1>Admin Panel</h1>
 
-    <form id="scoreForm">
-        <input type="text" id="player" placeholder="Player name" required>
-        <input type="number" id="score" placeholder="Score" required>
-        <button type="submit">Save Score</button>
-    </form>
+  <button id="startGame">Start New Game</button>
 
-    <p id="status"></p>
+  <div id="playerSection" style="display:none;">
+    <input id="playerName" placeholder="Player name">
+    <button id="addPlayer">Add Player</button>
+    <button id="go">Go to Current Game</button>
+  </div>
+
+  <p id="status"></p>
 </div>
 
+<script src="config.js"></script>
 <script src="admin.js"></script>
 </body>
 </html>

@@ -1,42 +1,31 @@
-const API_URL = "https://script.google.com/macros/s/AKfycbya-Rq7FScB8fRULWNsZx9tEJFe9bSwr2uxYZj6XWGgQD--n5B35who_E30lO0CDuo/exec";
+const API_URL = CONFIG.API_URL;
+const SECRET = "K7xP9QmA4Zr2FvL8EwYB0dS6C1H5J";
 
-const SECRET_KEY = "K7xP9QmA4Zr2FvL8EwYB0dS6C1H5J";
-
-const form = document.getElementById("scoreForm");
 const statusEl = document.getElementById("status");
+const section = document.getElementById("playerSection");
 
-form.addEventListener("submit", async (e) => {
-    e.preventDefault();
+document.getElementById("startGame").onclick = async () => {
+  await post({ action: "reset" });
+  section.style.display = "block";
+  statusEl.textContent = "New game started";
+};
 
-    const Player = document.getElementById("player").value.trim();
-    const Score = document.getElementById("score").value;
+document.getElementById("addPlayer").onclick = async () => {
+  const name = document.getElementById("playerName").value.trim();
+  if (!name) return;
 
-    if (!Player || Score === "") {
-        statusEl.textContent = "Invalid input";
-        return;
-    }
+  await post({ action: "addPlayer", Player: name });
+  statusEl.textContent = `Added ${name}`;
+  document.getElementById("playerName").value = "";
+};
 
-    statusEl.textContent = "Saving...";
+document.getElementById("go").onclick = () => {
+  window.location.href = "current.html";
+};
 
-    // ✅ Use FormData (NO preflight, NO CORS issue)
-    const formData = new FormData();
-    formData.append("secret", SECRET_KEY);
-    formData.append("Player", Player);
-    formData.append("Score", Score);
-
-    try {
-        const res = await fetch(API_URL, {
-            method: "POST",
-            body: formData
-        });
-
-        const data = await res.json();
-        statusEl.textContent = data.message || "Saved";
-        form.reset();
-
-    } catch (err) {
-        console.error(err);
-        statusEl.textContent = "Network error";
-    }
-});
-
+async function post(data) {
+  const fd = new FormData();
+  fd.append("secret", SECRET);
+  Object.entries(data).forEach(([k, v]) => fd.append(k, v));
+  await fetch(API_URL, { method: "POST", body: fd });
+}

@@ -1,60 +1,35 @@
-* {
-    box-sizing: border-box;
-}
-
 body {
-    background: #020617;
-    color: #e5e7eb;
-    font-family: system-ui, sans-serif;
-    min-height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+  background: #020617;
+  color: #e5e7eb;
+  font-family: system-ui;
 }
 
 .container {
-    width: 100%;
-    max-width: 360px;
-    padding: 20px;
-    text-align: center;
-}
-
-h1 {
-    margin-bottom: 20px;
-    font-size: 1.4rem;
-}
-
-form {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
+  max-width: 420px;
+  margin: auto;
+  padding: 20px;
 }
 
 input, button {
-    padding: 12px;
-    font-size: 1rem;
-    border-radius: 8px;
-    border: none;
+  width: 100%;
+  padding: 10px;
+  margin: 6px 0;
 }
 
-input {
-    background: #0f172a;
-    color: #e5e7eb;
+.player {
+  border-bottom: 1px solid #334155;
+  padding: 10px 0;
 }
 
-button {
-    background: #2563eb;
-    color: white;
-    font-weight: 600;
-    cursor: pointer;
+.history {
+  font-size: 0.8rem;
+  opacity: 0.7;
 }
 
-button:active {
-    transform: scale(0.98);
+button.add {
+  background: #065f46;
 }
 
-#status {
-    margin-top: 12px;
-    font-size: 0.9rem;
-    opacity: 0.8;
+button.undo {
+  background: #7f1d1d;
 }
