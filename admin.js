@@ -16,8 +16,9 @@ form.addEventListener("submit", async (e) => {
             method: "POST",
             body: JSON.stringify({
                 secret: "K7xP9QmA4Zr2FvL8EwYB0dS6C1H5J",
-                Player,Score
-            })
+                Player,
+                Score
+            });
 
         //     body: JSON.stringify({ Player, Score })
         // });
@@ -30,6 +31,7 @@ form.addEventListener("submit", async (e) => {
         statusEl.textContent = "Error saving score";
     }
 });
+
 
 
 
