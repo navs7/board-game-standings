@@ -1,4 +1,4 @@
-const API_URL = "PASTE_YOUR_GOOGLE_WEB_APP_URL_HERE";
+const API_URL = "https://script.google.com/macros/s/AKfycbzUY-b_91rzXzJ1pzhbzVgqARHB8zVmqptjnDjdT5-VFhzO_A1tNzZUb9__5SiJmjU/exec";
 
 async function loadScores() {
     const res = await fetch(API_URL);
