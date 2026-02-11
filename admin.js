@@ -6,7 +6,7 @@ if (entered !== ADMIN_PASSWORD) {
     throw new Error("Unauthorized");
 }
 
-const API_URL = "https://script.google.com/macros/s/AKfycbwk2_pehOgFZseDyyfmzuugfvdd6_ezytb6865TlC43pIf5ktmIUnvRkPPYQUhoX1om/exec";
+const API_URL = "https://script.google.com/macros/s/AKfycbwp9vsvIKOuSRixbQzbzZLgn7bebmEHo0EsqnsFHMWcHKv87bjGnolBBy30-Xnoym2L/exec";
 
 const form = document.getElementById("scoreForm");
 const statusEl = document.getElementById("status");
@@ -38,5 +38,6 @@ form.addEventListener("submit", async (e) => {
         statusEl.textContent = "Error saving score";
     }
 });
+
 
 
