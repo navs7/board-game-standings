@@ -164,3 +164,38 @@ button {
   margin-bottom: 0;
 }
 
+.bottom-actions {
+  margin-top: 24px;
+  display: flex;
+  gap: 12px;
+}
+
+.primary-btn {
+  flex: 1;
+  background: #3b82f6;
+  border: none;
+  border-radius: 12px;
+  padding: 10px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: white;
+}
+
+.secondary-btn {
+  flex: 1;
+  background: rgba(255,255,255,0.08);
+  border: none;
+  border-radius: 12px;
+  padding: 10px;
+  font-size: 0.9rem;
+  color: #e5e7eb;
+}
+
+@media (max-width: 420px) {
+  .primary-btn,
+  .secondary-btn {
+    padding: 9px;
+    font-size: 0.85rem;
+  }
+}
+
