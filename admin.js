@@ -1,4 +1,4 @@
-const API_URL = "https://script.google.com/macros/s/AKfycbwp9vsvIKOuSRixbQzbzZLgn7bebmEHo0EsqnsFHMWcHKv87bjGnolBBy30-Xnoym2L/exec";
+const API_URL = "https://script.google.com/macros/s/AKfycbya-Rq7FScB8fRULWNsZx9tEJFe9bSwr2uxYZj6XWGgQD--n5B35who_E30lO0CDuo/exec";
 
 const SECRET_KEY = "K7xP9QmA4Zr2FvL8EwYB0dS6C1H5J";
 
@@ -39,3 +39,4 @@ form.addEventListener("submit", async (e) => {
         statusEl.textContent = "Network error";
     }
 });
+
