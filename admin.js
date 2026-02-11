@@ -1,3 +1,11 @@
+const ADMIN_PASSWORD = "Neet4869"; // change this
+
+const entered = prompt("Enter admin password:");
+if (entered !== ADMIN_PASSWORD) {
+    document.body.innerHTML = "<h2>Access denied</h2>";
+    throw new Error("Unauthorized");
+}
+
 const API_URL = "https://script.google.com/macros/s/AKfycbwk2_pehOgFZseDyyfmzuugfvdd6_ezytb6865TlC43pIf5ktmIUnvRkPPYQUhoX1om/exec";
 
 const form = document.getElementById("scoreForm");
@@ -25,3 +33,4 @@ form.addEventListener("submit", async (e) => {
         statusEl.textContent = "Error saving score";
     }
 });
+
