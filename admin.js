@@ -1,6 +1,5 @@
 const API_URL = "https://script.google.com/macros/s/AKfycbwp9vsvIKOuSRixbQzbzZLgn7bebmEHo0EsqnsFHMWcHKv87bjGnolBBy30-Xnoym2L/exec";
 
-// 🔑 MUST MATCH the SECRET in Google Apps Script
 const SECRET_KEY = "K7xP9QmA4Zr2FvL8EwYB0dS6C1H5J";
 
 const form = document.getElementById("scoreForm");
@@ -10,39 +9,33 @@ form.addEventListener("submit", async (e) => {
     e.preventDefault();
 
     const Player = document.getElementById("player").value.trim();
-    const Score = Number(document.getElementById("score").value);
+    const Score = document.getElementById("score").value;
 
-    if (!Player || isNaN(Score)) {
-        statusEl.textContent = "Invalid player or score";
+    if (!Player || Score === "") {
+        statusEl.textContent = "Invalid input";
         return;
     }
 
     statusEl.textContent = "Saving...";
 
+    // ✅ Use FormData (NO preflight, NO CORS issue)
+    const formData = new FormData();
+    formData.append("secret", SECRET_KEY);
+    formData.append("Player", Player);
+    formData.append("Score", Score);
+
     try {
-        const response = await fetch(API_URL, {
+        const res = await fetch(API_URL, {
             method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify({
-                secret: SECRET_KEY,
-                Player: Player,
-                Score: Score
-            })
+            body: formData
         });
 
-        const result = await response.json();
+        const data = await res.json();
+        statusEl.textContent = data.message || "Saved";
+        form.reset();
 
-        if (result.status === "ok") {
-            statusEl.textContent = result.message;
-            form.reset();
-        } else {
-            statusEl.textContent = "Unauthorized or error";
-        }
-
-    } catch (error) {
-        console.error(error);
+    } catch (err) {
+        console.error(err);
         statusEl.textContent = "Network error";
     }
 });
