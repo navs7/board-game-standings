@@ -3,13 +3,27 @@ const board = document.getElementById("board");
 
 async function loadScores() {
   const res = await fetch(API_URL);
-  const data = await res.json();
+  let data = await res.json();
 
-  board.innerHTML = "";
-  data.forEach(p => {
-    const div = document.createElement("div");
-    div.textContent = `${p.Player}: ${p.Score}`;
-    board.appendChild(div);
+  // 🔢 Sort by score (descending)
+  data.sort((a, b) => b.Score - a.Score);
+
+  // Remove old rows (keep header)
+  board.querySelectorAll(".row:not(.header)").forEach(r => r.remove());
+
+  data.forEach((p, index) => {
+    const row = document.createElement("div");
+    row.className = "row";
+
+    if (index === 0) row.classList.add("leader");
+
+    row.innerHTML = `
+      <span>${index + 1}</span>
+      <span>${p.Player}</span>
+      <span>${p.Score}</span>
+    `;
+
+    board.appendChild(row);
   });
 }
 
