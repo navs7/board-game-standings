@@ -124,3 +124,43 @@ button {
   line-height: 1.4;
   word-break: break-word;
 }
+
+/* ===== SCORE ROW ===== */
+.score-row {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+/* ===== ICON BUTTONS ===== */
+.icon-btn {
+  width: 42px;
+  height: 42px;
+  border-radius: 12px;
+  border: none;
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #fff;
+  cursor: pointer;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Add */
+.icon-btn.add {
+  background: var(--green);
+}
+
+/* Undo */
+.icon-btn.undo {
+  background: var(--red);
+}
+
+/* Input adjustment */
+.score-row input {
+  flex: 1;
+  margin-bottom: 0;
+}
+
