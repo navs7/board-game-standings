@@ -7,6 +7,10 @@ document.getElementById("export").onclick = async () => {
   alert("Final results exported");
 };
 
+document.getElementById("backToAdmin").onclick = () => {
+  window.location.href = "admin.html";
+};
+
 async function loadPlayers() {
   const res = await fetch(API_URL);
   const data = await res.json();
@@ -54,4 +58,5 @@ async function post(data) {
 }
 
 loadPlayers();
+
 
