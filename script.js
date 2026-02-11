@@ -1,4 +1,4 @@
-const API_URL = "https://script.google.com/macros/s/AKfycbwk2_pehOgFZseDyyfmzuugfvdd6_ezytb6865TlC43pIf5ktmIUnvRkPPYQUhoX1om/exec";
+const API_URL = "https://script.google.com/macros/s/AKfycbwp9vsvIKOuSRixbQzbzZLgn7bebmEHo0EsqnsFHMWcHKv87bjGnolBBy30-Xnoym2L/exec";
 
 async function loadScores() {
     const res = await fetch(API_URL);
@@ -32,5 +32,6 @@ loadScores();
 
 // Auto update every 30 seconds
 setInterval(loadScores, 30000);
+
 
 
