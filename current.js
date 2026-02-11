@@ -17,12 +17,18 @@ async function loadPlayers() {
     div.className = "player";
 
     div.innerHTML = `
-      <strong>${p.Player}</strong>
-      <input type="number" placeholder="Score">
-      <button class="add">Add</button>
-      <button class="undo">Undo</button>
-      <div class="history">${p.History || ""}</div>
-    `;
+  <strong>${p.Player}</strong>
+
+  <div class="score-row">
+    <input type="number" placeholder="Score">
+
+    <button class="icon-btn add" title="Add score">＋</button>
+    <button class="icon-btn undo" title="Undo last score">↺</button>
+  </div>
+
+  <div class="history">${p.History || ""}</div>
+`;
+
 
     div.querySelector(".add").onclick = async () => {
       const score = div.querySelector("input").value;
@@ -48,3 +54,4 @@ async function post(data) {
 }
 
 loadPlayers();
+
