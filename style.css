@@ -1,68 +1,65 @@
-/* ========= RESET ========= */
-* {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-}
-
-/* ========= THEME ========= */
 :root {
   --bg: #0b0f1a;
   --card: #111827;
   --muted: #9ca3af;
   --text: #f9fafb;
   --accent: #22c55e;
+  --leader: #1f2937;
 }
 
-/* ========= PAGE ========= */
 body {
   min-height: 100vh;
   background: linear-gradient(180deg, #020617, #0b0f1a);
-  font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont;
+  font-family: Inter, system-ui, -apple-system;
   color: var(--text);
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
 }
 
-/* ========= SCOREBOARD ========= */
 h1 {
-  text-align: center;
-  margin-bottom: 16px;
+  margin-bottom: 18px;
   font-weight: 600;
-  letter-spacing: 0.4px;
 }
 
 #board {
-  width: 320px;
+  width: 360px;
   background: var(--card);
   border-radius: 18px;
-  padding: 18px;
-  box-shadow:
-    0 20px 40px rgba(0,0,0,0.45),
-    inset 0 1px 0 rgba(255,255,255,0.04);
+  padding: 14px;
+  box-shadow: 0 30px 60px rgba(0,0,0,0.45);
 }
 
-/* ========= PLAYER ROW ========= */
-#board div {
-  display: flex;
-  justify-content: space-between;
+/* TABLE GRID */
+.row {
+  display: grid;
+  grid-template-columns: 50px 1fr 70px;
   align-items: center;
-  padding: 12px 10px;
+  padding: 10px 12px;
   border-radius: 10px;
+  font-size: 0.95rem;
 }
 
-#board div:not(:last-child) {
+.row:not(.header):not(:last-child) {
   margin-bottom: 6px;
 }
 
-#board div span:first-child {
-  font-size: 0.95rem;
+/* HEADER */
+.header {
   color: var(--muted);
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
-#board div span:last-child {
-  font-size: 1.2rem;
+/* LEADER */
+.leader {
+  background: var(--leader);
+}
+
+.row span:last-child {
+  text-align: right;
   font-weight: 600;
   color: var(--accent);
 }
