@@ -14,8 +14,6 @@ const playersContainer = document.getElementById("players");
 let isProcessing = false;
 let playerStates = {}; // Track individual player button states
 let autoRefreshInterval = null;
-let userIsTyping = false; // Track if user is actively typing
-let typingTimeout = null;
 
 // ========= START NEW GAME =========
 startGameBtn.onclick = async () => {
@@ -157,11 +155,6 @@ exportBtn.onclick = async () => {
 
 // ========= LOAD PLAYERS =========
 async function loadPlayers() {
-  // Skip refresh if user is actively typing
-  if (userIsTyping) {
-    return;
-  }
-  
   // Show loading state only if container is empty
   if (playersContainer.children.length === 0) {
     playersContainer.innerHTML = '<p style="text-align:center;color:var(--muted);padding:20px;">Loading players...</p>';
@@ -195,176 +188,198 @@ async function loadPlayers() {
 
 // ========= RENDER PLAYERS =========
 function renderPlayers(data) {
-  playersContainer.innerHTML = "";
+  // Store current focus and values
+  const activeElement = document.activeElement;
+  const isInputFocused = activeElement && activeElement.tagName === 'INPUT' && activeElement.type === 'number';
+  const focusedPlayer = isInputFocused ? activeElement.closest('.player')?.getAttribute('data-player') : null;
+  const focusedValue = isInputFocused ? activeElement.value : null;
 
-  data.forEach(p => {
+  // Get existing player cards
+  const existingCards = {};
+  playersContainer.querySelectorAll('.player').forEach(card => {
+    const playerKey = card.getAttribute('data-player');
+    existingCards[playerKey] = card;
+  });
+
+  // Update or create player cards
+  data.forEach((p, index) => {
     const playerKey = p.Player;
     if (!playerStates[playerKey]) {
       playerStates[playerKey] = { isAdding: false, isUndoing: false };
     }
 
-    const div = document.createElement("div");
-    div.className = "player";
-    div.setAttribute("data-player", playerKey);
-
-    div.innerHTML = `
-      <strong>${escapeHtml(p.Player)}</strong>
-
-      <div class="score-row">
-        <input 
-          type="number" 
-          placeholder="Score"
-          min="0"
-          step="1"
-          aria-label="Score for ${escapeHtml(p.Player)}"
-        >
-
-        <button 
-          class="icon-btn add" 
-          title="Add score"
-          aria-label="Add score for ${escapeHtml(p.Player)}"
-        >
-          ＋
-        </button>
-        <button 
-          class="icon-btn undo" 
-          title="Undo last score"
-          aria-label="Undo last score for ${escapeHtml(p.Player)}"
-        >
-          ↺
-        </button>
-      </div>
-
-      <div class="history">${p.History || "No scores yet"}</div>
-    `;
-
-    const input = div.querySelector("input");
-    const addBtn = div.querySelector(".add");
-    const undoBtn = div.querySelector(".undo");
-
-    // Pause auto-refresh when user is typing
-    input.addEventListener('focus', () => {
-      userIsTyping = true;
-    });
-
-    input.addEventListener('input', () => {
-      userIsTyping = true;
-      
-      // Clear previous timeout
-      if (typingTimeout) {
-        clearTimeout(typingTimeout);
+    let div = existingCards[playerKey];
+    
+    if (div) {
+      // Update existing card - only update history, don't touch inputs
+      const historyEl = div.querySelector('.history');
+      if (historyEl) {
+        historyEl.textContent = p.History || "No scores yet";
       }
       
-      // Resume auto-refresh 2 seconds after user stops typing
-      typingTimeout = setTimeout(() => {
-        userIsTyping = false;
-      }, 2000);
-    });
-
-    input.addEventListener('blur', () => {
-      // Resume auto-refresh when input loses focus
-      if (typingTimeout) {
-        clearTimeout(typingTimeout);
-      }
-      setTimeout(() => {
-        userIsTyping = false;
-      }, 500);
-    });
-
-    // Add score handler
-    addBtn.onclick = async () => {
-      if (playerStates[playerKey].isAdding) return;
-      
-      const score = input.value;
-      const validation = validateScore(score);
-      
-      if (!validation.valid) {
-        showError(validation.error);
-        input.focus();
-        return;
-      }
-      
-      playerStates[playerKey].isAdding = true;
-      setLoadingState(addBtn, true);
-      
-      // Add loading animation to the player card
-      const playerCard = div;
-      playerCard.classList.add('loading');
-      
-      // Show loading spinner in the add button
-      const originalContent = addBtn.innerHTML;
-      addBtn.innerHTML = '<span class="spinner"></span>';
-      
-      try {
-        await apiPost({ 
-          action: "addScore", 
-          Player: p.Player, 
-          Score: validation.value 
-        });
-        
-        statusEl.textContent = `✅ Score added for ${p.Player}`;
-        statusEl.style.color = "var(--green)";
-        
-        input.value = "";
-        await loadPlayers();
-        
-        // Re-focus the input for quick entry
-        const newDiv = playersContainer.querySelector(`[data-player="${playerKey}"]`);
-        if (newDiv) {
-          newDiv.querySelector("input").focus();
-        }
-      } catch (error) {
-        statusEl.textContent = `❌ Failed to add score`;
-        statusEl.style.color = "var(--red)";
-        showError("Could not add score. Please try again.");
-        
-        // Restore button content on error
-        addBtn.innerHTML = originalContent;
-        playerCard.classList.remove('loading');
-      } finally {
-        playerStates[playerKey].isAdding = false;
-        setLoadingState(addBtn, false);
-      }
-    };
-
-    // Undo score handler
-    undoBtn.onclick = async () => {
-      if (playerStates[playerKey].isUndoing) return;
-      
-      if (!p.History || p.History.trim() === "") {
-        showError("No scores to undo");
-        return;
-      }
-      
-      playerStates[playerKey].isUndoing = true;
-      setLoadingState(undoBtn, true);
-      
-      try {
-        await apiPost({ action: "undoScore", Player: p.Player });
-        
-        statusEl.textContent = `↺ Undid last score for ${p.Player}`;
-        statusEl.style.color = "var(--blue)";
-        
-        await loadPlayers();
-      } catch (error) {
-        statusEl.textContent = `❌ Failed to undo score`;
-        statusEl.style.color = "var(--red)";
-        showError("Could not undo score. Please try again.");
-      } finally {
-        playerStates[playerKey].isUndoing = false;
-        setLoadingState(undoBtn, false);
-      }
-    };
-
-    // Enter key to add score
-    input.addEventListener('keypress', (e) => {
-      if (e.key === 'Enter') {
-        addBtn.click();
-      }
-    });
-
-    playersContainer.appendChild(div);
+      // Remove from existingCards so we know it's been processed
+      delete existingCards[playerKey];
+    } else {
+      // Create new card
+      div = createPlayerCard(p, playerKey);
+      playersContainer.appendChild(div);
+    }
   });
+
+  // Remove cards for players that no longer exist
+  Object.values(existingCards).forEach(card => {
+    card.remove();
+  });
+
+  // Restore focus and value if input was focused
+  if (focusedPlayer && focusedValue !== null) {
+    const playerCard = playersContainer.querySelector(`[data-player="${focusedPlayer}"]`);
+    if (playerCard) {
+      const input = playerCard.querySelector('input');
+      if (input) {
+        input.value = focusedValue;
+        input.focus();
+        // Restore cursor position to end
+        input.setSelectionRange(input.value.length, input.value.length);
+      }
+    }
+  }
+}
+
+// ========= CREATE PLAYER CARD =========
+function createPlayerCard(p, playerKey) {
+  const div = document.createElement("div");
+  div.className = "player";
+  div.setAttribute("data-player", playerKey);
+
+  div.innerHTML = `
+    <strong>${escapeHtml(p.Player)}</strong>
+
+    <div class="score-row">
+      <input 
+        type="number" 
+        placeholder="Score"
+        min="0"
+        step="1"
+        aria-label="Score for ${escapeHtml(p.Player)}"
+      >
+
+      <button 
+        class="icon-btn add" 
+        title="Add score"
+        aria-label="Add score for ${escapeHtml(p.Player)}"
+      >
+        ＋
+      </button>
+      <button 
+        class="icon-btn undo" 
+        title="Undo last score"
+        aria-label="Undo last score for ${escapeHtml(p.Player)}"
+      >
+        ↺
+      </button>
+    </div>
+
+    <div class="history">${p.History || "No scores yet"}</div>
+  `;
+
+  const input = div.querySelector("input");
+  const addBtn = div.querySelector(".add");
+  const undoBtn = div.querySelector(".undo");
+
+  // Add score handler
+  addBtn.onclick = async () => {
+    if (playerStates[playerKey].isAdding) return;
+    
+    const score = input.value;
+    const validation = validateScore(score);
+    
+    if (!validation.valid) {
+      showError(validation.error);
+      input.focus();
+      return;
+    }
+    
+    playerStates[playerKey].isAdding = true;
+    setLoadingState(addBtn, true);
+    
+    // Add loading animation to the player card
+    const playerCard = div;
+    playerCard.classList.add('loading');
+    
+    // Show loading spinner in the add button
+    const originalContent = addBtn.innerHTML;
+    addBtn.innerHTML = '<span class="spinner"></span>';
+    
+    try {
+      await apiPost({ 
+        action: "addScore", 
+        Player: p.Player, 
+        Score: validation.value 
+      });
+      
+      statusEl.textContent = `✅ Score added for ${p.Player}`;
+      statusEl.style.color = "var(--green)";
+      
+      input.value = "";
+      await loadPlayers();
+      
+      // Re-focus the input for quick entry
+      const newDiv = playersContainer.querySelector(`[data-player="${playerKey}"]`);
+      if (newDiv) {
+        newDiv.querySelector("input").focus();
+      }
+    } catch (error) {
+      statusEl.textContent = `❌ Failed to add score`;
+      statusEl.style.color = "var(--red)";
+      showError("Could not add score. Please try again.");
+      
+      // Restore button content on error
+      addBtn.innerHTML = originalContent;
+      playerCard.classList.remove('loading');
+    } finally {
+      playerStates[playerKey].isAdding = false;
+      setLoadingState(addBtn, false);
+    }
+  };
+
+  // Undo score handler
+  undoBtn.onclick = async () => {
+    if (playerStates[playerKey].isUndoing) return;
+    
+    if (!p.History || p.History.trim() === "") {
+      showError("No scores to undo");
+      return;
+    }
+    
+    playerStates[playerKey].isUndoing = true;
+    setLoadingState(undoBtn, true);
+    
+    try {
+      await apiPost({ action: "undoScore", Player: p.Player });
+      
+      statusEl.textContent = `↺ Undid last score for ${p.Player}`;
+      statusEl.style.color = "var(--blue)";
+      
+      await loadPlayers();
+    } catch (error) {
+      statusEl.textContent = `❌ Failed to undo score`;
+      statusEl.style.color = "var(--red)";
+      showError("Could not undo score. Please try again.");
+    } finally {
+      playerStates[playerKey].isUndoing = false;
+      setLoadingState(undoBtn, false);
+    }
+  };
+
+  // Enter key to add score
+  input.addEventListener('keypress', (e) => {
+    if (e.key === 'Enter') {
+      addBtn.click();
+    }
+  });
+
+  return div;
 }
 
 // ========= UTILITY =========
