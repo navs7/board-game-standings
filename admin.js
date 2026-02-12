@@ -14,6 +14,8 @@ const playersContainer = document.getElementById("players");
 let isProcessing = false;
 let playerStates = {}; // Track individual player button states
 let autoRefreshInterval = null;
+let userIsTyping = false; // Track if user is actively typing
+let typingTimeout = null;
 
 // ========= START NEW GAME =========
 startGameBtn.onclick = async () => {
@@ -111,7 +113,7 @@ resetGameBtn.onclick = () => {
 exportBtn.onclick = async () => {
   if (isProcessing) return;
   
-  const confirmed = confirm("Export final results? This will save the game data.");
+  const confirmed = confirm("Export final results? This will save the game data to a new timestamped sheet.");
   if (!confirmed) return;
   
   isProcessing = true;
@@ -120,14 +122,24 @@ exportBtn.onclick = async () => {
   exportBtn.textContent = "Exporting...";
   
   try {
-    await apiPost({ action: "exportFinal" });
+    // Create timestamp for sheet name
+    const now = new Date();
+    const timestamp = now.toISOString().replace(/[:.]/g, '-').slice(0, -5); // Format: 2026-02-12T10-30-45
+    const sheetName = `Game_${timestamp}`;
+    
+    await apiPost({ 
+      action: "exportFinal",
+      timestamp: timestamp,
+      sheetName: sheetName
+    });
+    
     exportBtn.textContent = "✅ Exported!";
-    statusEl.textContent = "✅ Results exported successfully";
+    statusEl.textContent = `✅ Results exported to sheet: ${sheetName}`;
     statusEl.style.color = "var(--green)";
     
     setTimeout(() => {
       exportBtn.textContent = originalText;
-    }, 2000);
+    }, 3000);
   } catch (error) {
     exportBtn.textContent = "❌ Failed";
     statusEl.textContent = "❌ Export failed";
@@ -145,6 +157,11 @@ exportBtn.onclick = async () => {
 
 // ========= LOAD PLAYERS =========
 async function loadPlayers() {
+  // Skip refresh if user is actively typing
+  if (userIsTyping) {
+    return;
+  }
+  
   // Show loading state only if container is empty
   if (playersContainer.children.length === 0) {
     playersContainer.innerHTML = '<p style="text-align:center;color:var(--muted);padding:20px;">Loading players...</p>';
@@ -224,6 +241,35 @@ function renderPlayers(data) {
     const input = div.querySelector("input");
     const addBtn = div.querySelector(".add");
     const undoBtn = div.querySelector(".undo");
+
+    // Pause auto-refresh when user is typing
+    input.addEventListener('focus', () => {
+      userIsTyping = true;
+    });
+
+    input.addEventListener('input', () => {
+      userIsTyping = true;
+      
+      // Clear previous timeout
+      if (typingTimeout) {
+        clearTimeout(typingTimeout);
+      }
+      
+      // Resume auto-refresh 2 seconds after user stops typing
+      typingTimeout = setTimeout(() => {
+        userIsTyping = false;
+      }, 2000);
+    });
+
+    input.addEventListener('blur', () => {
+      // Resume auto-refresh when input loses focus
+      if (typingTimeout) {
+        clearTimeout(typingTimeout);
+      }
+      setTimeout(() => {
+        userIsTyping = false;
+      }, 500);
+    });
 
     // Add score handler
     addBtn.onclick = async () => {
