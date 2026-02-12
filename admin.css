@@ -7,26 +7,50 @@
 
 /* ========= THEME ========= */
 :root {
+  /* Backgrounds */
   --bg: #0b0f1a;
   --card: #111827;
   --surface: #0f172a;
-  --muted: #9ca3af;
+  
+  /* Text */
   --text: #f9fafb;
-
+  --muted: #9ca3af;
+  
+  /* Semantic Colors */
   --green: #22c55e;
   --red: #ef4444;
   --blue: #3b82f6;
+  
+  /* Spacing */
+  --spacing-xs: 6px;
+  --spacing-sm: 10px;
+  --spacing-md: 14px;
+  --spacing-lg: 22px;
+}
+
+/* ========= ACCESSIBILITY ========= */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
 }
 
 /* ========= PAGE ========= */
 body {
   min-height: 100vh;
   background: linear-gradient(180deg, #020617, #0b0f1a);
-  font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont;
+  font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
   color: var(--text);
   display: flex;
   justify-content: center;
   align-items: center;
+  padding: 20px;
 }
 
 /* ========= CARD ========= */
@@ -35,10 +59,10 @@ body {
   max-width: 420px;
   background: var(--card);
   border-radius: 20px;
-  padding: 22px;
+  padding: var(--spacing-lg);
   box-shadow:
-    0 24px 60px rgba(0,0,0,0.5),
-    inset 0 1px 0 rgba(255,255,255,0.04);
+    0 24px 60px rgba(0, 0, 0, 0.5),
+    inset 0 1px 0 rgba(255, 255, 255, 0.04);
 }
 
 h1 {
@@ -52,12 +76,18 @@ h1 {
 input {
   width: 100%;
   background: var(--surface);
-  border: none;
+  border: 1px solid transparent;
   border-radius: 12px;
   padding: 12px 14px;
   font-size: 0.95rem;
   color: var(--text);
-  margin-bottom: 10px;
+  margin-bottom: var(--spacing-sm);
+  transition: border-color 0.2s;
+}
+
+input:focus {
+  outline: none;
+  border-color: var(--blue);
 }
 
 input::placeholder {
@@ -74,7 +104,23 @@ button {
   font-weight: 600;
   color: #fff;
   cursor: pointer;
-  margin-bottom: 10px;
+  margin-bottom: var(--spacing-sm);
+  transition: all 0.2s;
+  touch-action: manipulation; /* Prevent double-tap zoom on mobile */
+}
+
+button:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+button:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
 }
 
 #startGame {
@@ -98,16 +144,24 @@ button {
 /* ========= STATUS ========= */
 #status {
   text-align: center;
-  font-size: 0.8rem;
+  font-size: 0.85rem;
   color: var(--muted);
+  padding: 8px;
+  min-height: 1.5rem;
+  transition: color 0.3s;
 }
 
 /* ========= PLAYER ROW ========= */
 .player {
   background: var(--surface);
   border-radius: 14px;
-  padding: 14px;
+  padding: var(--spacing-md);
   margin-top: 12px;
+  transition: background 0.2s;
+}
+
+.player:hover {
+  background: rgba(255, 255, 255, 0.04);
 }
 
 .player strong {
@@ -118,21 +172,26 @@ button {
 
 /* ========= HISTORY ========= */
 .history {
-  margin-top: 6px;
+  margin-top: var(--spacing-xs);
   font-size: 0.75rem;
   color: var(--muted);
   line-height: 1.4;
   word-break: break-word;
 }
 
-/* ===== SCORE ROW ===== */
+/* ========= SCORE ROW ========= */
 .score-row {
   display: flex;
-  gap: 10px;
+  gap: var(--spacing-sm);
   align-items: center;
 }
 
-/* ===== ICON BUTTONS ===== */
+.score-row input {
+  flex: 1;
+  margin-bottom: 0;
+}
+
+/* ========= ICON BUTTONS ========= */
 .icon-btn {
   width: 42px;
   height: 42px;
@@ -146,24 +205,27 @@ button {
   display: flex;
   align-items: center;
   justify-content: center;
+  transition: all 0.2s;
+  touch-action: manipulation;
 }
 
-/* Add */
 .icon-btn.add {
   background: var(--green);
 }
 
-/* Undo */
 .icon-btn.undo {
   background: var(--red);
 }
 
-/* Input adjustment */
-.score-row input {
-  flex: 1;
-  margin-bottom: 0;
+.icon-btn:hover:not(:disabled) {
+  transform: scale(1.05);
 }
 
+.icon-btn:active:not(:disabled) {
+  transform: scale(0.95);
+}
+
+/* ========= BOTTOM ACTIONS ========= */
 .bottom-actions {
   margin-top: 24px;
   display: flex;
@@ -172,30 +234,58 @@ button {
 
 .primary-btn {
   flex: 1;
-  background: #3b82f6;
+  background: var(--blue);
   border: none;
   border-radius: 12px;
   padding: 10px;
   font-size: 0.9rem;
   font-weight: 600;
   color: white;
+  cursor: pointer;
+  transition: all 0.2s;
+  touch-action: manipulation;
 }
 
 .secondary-btn {
   flex: 1;
-  background: rgba(255,255,255,0.08);
+  background: rgba(255, 255, 255, 0.08);
   border: none;
   border-radius: 12px;
   padding: 10px;
   font-size: 0.9rem;
+  font-weight: 600;
   color: #e5e7eb;
+  cursor: pointer;
+  transition: all 0.2s;
+  touch-action: manipulation;
 }
 
+.primary-btn:hover:not(:disabled),
+.secondary-btn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.primary-btn:active:not(:disabled),
+.secondary-btn:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+/* ========= RESPONSIVE ========= */
 @media (max-width: 420px) {
+  .container {
+    padding: 18px;
+  }
+  
   .primary-btn,
   .secondary-btn {
     padding: 9px;
     font-size: 0.85rem;
   }
+  
+  .icon-btn {
+    width: 38px;
+    height: 38px;
+    font-size: 1.1rem;
+  }
 }
-

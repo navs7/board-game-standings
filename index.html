@@ -1,27 +1,26 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>Flip 7</title>
-  <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Flip 7 - Scoreboard</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
   <div class="app">
-<h1>Flip 7 – Scoreboard</h1>
+    <h1>Flip 7 – Scoreboard</h1>
 
-<div id="board" class="leaderboard">
-  <div class="row header">
-    <span>Rank</span>
-    <span>Player</span>
-    <span>Score</span>
+    <div id="board" class="leaderboard" role="table" aria-label="Game leaderboard">
+      <div class="row header" role="row">
+        <span role="columnheader">Rank</span>
+        <span role="columnheader">Player</span>
+        <span role="columnheader">Score</span>
+      </div>
+    </div>
   </div>
-</div>
- </div>
 
-<script src="config.js"></script>
-<script src="script.js"></script>
+  <script src="config.js"></script>
+  <script src="utils.js"></script>
+  <script src="script.js"></script>
 </body>
 </html>
-
-
-

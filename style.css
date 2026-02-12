@@ -1,37 +1,73 @@
+/* ========= RESET ========= */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+/* ========= THEME ========= */
 :root {
+  /* Backgrounds */
   --bg: #0b0f1a;
   --card: #111827;
-  --muted: #9ca3af;
-  --text: #f9fafb;
-  --accent: #22c55e;
   --leader: #1f2937;
+  
+  /* Text */
+  --text: #f9fafb;
+  --muted: #9ca3af;
+  
+  /* Accent */
+  --accent: #22c55e;
+  --red: #ef4444;
+  
+  /* Spacing */
+  --spacing-sm: 6px;
+  --spacing-md: 12px;
+  --spacing-lg: 18px;
+}
+
+/* ========= PAGE ========= */
+html,
+body {
+  width: 100%;
+  min-height: 100vh;
+  overflow-x: hidden;
 }
 
 body {
-  min-height: 100vh;
   background: linear-gradient(180deg, #020617, #0b0f1a);
-  font-family: Inter, system-ui, -apple-system;
+  font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
   color: var(--text);
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  padding: 20px;
+}
+
+/* ========= APP CONTAINER ========= */
+.app {
+  width: 100%;
+  max-width: 420px;
 }
 
 h1 {
-  margin-bottom: 18px;
+  margin-bottom: var(--spacing-lg);
   font-weight: 600;
+  text-align: center;
+  font-size: 1.5rem;
 }
 
+/* ========= LEADERBOARD ========= */
 #board {
-  width: 360px;
+  width: 100%;
   background: var(--card);
   border-radius: 18px;
   padding: 14px;
-  box-shadow: 0 30px 60px rgba(0,0,0,0.45);
+  box-shadow: 0 30px 60px rgba(0, 0, 0, 0.45);
 }
 
-/* TABLE GRID */
+/* ========= TABLE GRID ========= */
 .row {
   display: grid;
   grid-template-columns: 50px 1fr 70px;
@@ -39,23 +75,41 @@ h1 {
   padding: 10px 12px;
   border-radius: 10px;
   font-size: 0.95rem;
+  transition: background 0.2s;
 }
 
 .row:not(.header):not(:last-child) {
-  margin-bottom: 6px;
+  margin-bottom: var(--spacing-sm);
 }
 
-/* HEADER */
+.row:not(.header):hover {
+  background: rgba(255, 255, 255, 0.02);
+}
+
+/* ========= HEADER ROW ========= */
 .header {
   color: var(--muted);
   font-size: 0.8rem;
   text-transform: uppercase;
   letter-spacing: 0.5px;
+  font-weight: 600;
 }
 
-/* LEADER */
+/* ========= LEADER ROW ========= */
 .leader {
   background: var(--leader);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* ========= COLUMNS ========= */
+.row span:first-child {
+  text-align: left;
+  color: var(--muted);
+  font-weight: 600;
+}
+
+.row span:nth-child(2) {
+  text-align: left;
 }
 
 .row span:last-child {
@@ -64,56 +118,50 @@ h1 {
   color: var(--accent);
 }
 
-/* ===== GLOBAL RESET & MOBILE FIX ===== */
-* {
-  box-sizing: border-box;
+.leader span:first-child {
+  color: #fbbf24; /* Gold for #1 */
 }
 
-html, body {
-  width: 100%;
-  overflow-x: hidden;
+/* ========= RESPONSIVE ========= */
+@media (max-width: 420px) {
+  .app {
+    padding: 16px;
+  }
+  
+  h1 {
+    font-size: 1.3rem;
+  }
+  
+  #board {
+    padding: 12px;
+  }
+  
+  .row {
+    grid-template-columns: 40px 1fr 60px;
+    padding: 9px 10px;
+    font-size: 0.9rem;
+  }
 }
 
-body {
-  margin: 0;
-  min-height: 100vh;
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
-  background: radial-gradient(circle at top, #0f172a, #020617);
-  color: #e5e7eb;
-  display: flex;
-  justify-content: center;
+@media (max-width: 360px) {
+  .row {
+    grid-template-columns: 35px 1fr 55px;
+    font-size: 0.85rem;
+  }
 }
 
-.app {
-  width: 100%;
-  max-width: 420px;
-  padding: 20px;
+/* ========= ANIMATIONS ========= */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
-.leaderboard {
-  background: linear-gradient(180deg, #111827, #020617);
-  border-radius: 20px;
-  padding: 16px;
-  box-shadow: 0 20px 40px rgba(0,0,0,0.5);
-}
-
-.leaderboard-header,
-.leaderboard-row {
-  display: grid;
-  grid-template-columns: 60px 1fr;
-  gap: 12px;
-  align-items: center;
-}
-
-.leaderboard-header {
-  font-size: 0.75rem;
-  color: #9ca3af;
-  margin-bottom: 10px;
-}
-
-.leaderboard-row {
-  background: rgba(255,255,255,0.04);
-  border-radius: 12px;
-  padding: 12px;
-  margin-bottom: 8px;
+.row:not(.header) {
+  animation: fadeIn 0.3s ease-out;
 }

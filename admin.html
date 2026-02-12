@@ -1,7 +1,9 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>Admin</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Panel - Board Game Standings</title>
   <link rel="stylesheet" href="admin.css">
 </head>
 <body>
@@ -9,18 +11,27 @@
 <div class="container">
   <h1>Admin Panel</h1>
 
-  <button id="startGame">Start New Game</button>
+  <button id="startGame" aria-label="Start a new game">Start New Game</button>
 
   <div id="playerSection" style="display:none;">
-    <input id="playerName" placeholder="Player name">
-    <button id="addPlayer">Add Player</button>
-    <button id="go">Go to Current Game</button>
+    <label for="playerName" class="sr-only">Player Name</label>
+    <input 
+      id="playerName" 
+      type="text"
+      placeholder="Player name"
+      aria-label="Enter player name"
+      maxlength="30"
+      required
+    >
+    <button id="addPlayer" aria-label="Add player to game">Add Player</button>
+    <button id="go" aria-label="Go to current game view">Go to Current Game</button>
   </div>
 
-  <p id="status"></p>
+  <p id="status" role="status" aria-live="polite"></p>
 </div>
 
 <script src="config.js"></script>
+<script src="utils.js"></script>
 <script src="admin.js"></script>
 </body>
 </html>
