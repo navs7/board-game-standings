@@ -241,6 +241,14 @@ function renderPlayers(data) {
       playerStates[playerKey].isAdding = true;
       setLoadingState(addBtn, true);
       
+      // Add loading animation to the player card
+      const playerCard = div;
+      playerCard.classList.add('loading');
+      
+      // Show loading spinner in the add button
+      const originalContent = addBtn.innerHTML;
+      addBtn.innerHTML = '<span class="spinner"></span>';
+      
       try {
         await apiPost({ 
           action: "addScore", 
@@ -263,6 +271,10 @@ function renderPlayers(data) {
         statusEl.textContent = `❌ Failed to add score`;
         statusEl.style.color = "var(--red)";
         showError("Could not add score. Please try again.");
+        
+        // Restore button content on error
+        addBtn.innerHTML = originalContent;
+        playerCard.classList.remove('loading');
       } finally {
         playerStates[playerKey].isAdding = false;
         setLoadingState(addBtn, false);

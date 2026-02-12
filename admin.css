@@ -50,20 +50,20 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 20px;
+  padding: 16px;
 }
 
 /* ========= CARD ========= */
 .container {
   width: 100%;
-  max-width: 480px;
+  max-width: 520px;
   background: var(--card);
   border-radius: 20px;
   padding: var(--spacing-lg);
   box-shadow:
     0 24px 60px rgba(0, 0, 0, 0.5),
     inset 0 1px 0 rgba(255, 255, 255, 0.04);
-  max-height: 90vh;
+  max-height: 92vh;
   overflow-y: auto;
 }
 
@@ -84,7 +84,7 @@ body {
 
 h1 {
   text-align: center;
-  font-size: 1.5rem;
+  font-size: 1.6rem;
   font-weight: 600;
   margin-bottom: 20px;
 }
@@ -94,18 +94,6 @@ h2 {
   font-weight: 600;
   margin-bottom: 12px;
   color: var(--text);
-}
-
-/* ========= SECTION HEADER ========= */
-.section-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 16px;
-}
-
-.section-header h2 {
-  margin-bottom: 0;
 }
 
 /* ========= INPUTS ========= */
@@ -159,8 +147,7 @@ button:disabled {
   cursor: not-allowed;
 }
 
-#startGame,
-#resetGame {
+#startGame {
   background: var(--red);
 }
 
@@ -173,17 +160,19 @@ button:disabled {
   background: var(--blue);
 }
 
-.undo {
-  background: #7f1d1d;
+#resetGame {
+  background: rgba(239, 68, 68, 0.15);
+  color: #fca5a5;
+  border: 1px solid rgba(239, 68, 68, 0.3);
 }
 
-/* ========= ICON TEXT BUTTON ========= */
-.icon-text-btn {
-  width: auto;
-  padding: 8px 14px;
-  font-size: 0.85rem;
-  margin-bottom: 0;
-  background: var(--red);
+#resetGame:hover:not(:disabled) {
+  background: rgba(239, 68, 68, 0.25);
+  border-color: rgba(239, 68, 68, 0.5);
+}
+
+.undo {
+  background: #7f1d1d;
 }
 
 /* ========= STATUS ========= */
@@ -205,12 +194,12 @@ button:disabled {
 }
 
 #playerSection {
-  padding-top: 12px;
+  padding-top: 16px;
   border-top: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 #gameSection {
-  padding-top: 12px;
+  padding-top: 16px;
   border-top: 1px solid rgba(255, 255, 255, 0.1);
 }
 
@@ -220,17 +209,52 @@ button:disabled {
   border-radius: 14px;
   padding: var(--spacing-md);
   margin-top: 12px;
-  transition: background 0.2s;
+  transition: all 0.3s;
+  position: relative;
+  overflow: hidden;
 }
 
 .player:hover {
   background: rgba(255, 255, 255, 0.04);
 }
 
+/* Loading state for player card */
+.player.loading {
+  background: rgba(59, 130, 246, 0.1);
+  border: 1px solid rgba(59, 130, 246, 0.3);
+}
+
+.player.loading::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(59, 130, 246, 0.2),
+    transparent
+  );
+  animation: shimmer 1.5s infinite;
+}
+
+@keyframes shimmer {
+  100% {
+    left: 100%;
+  }
+}
+
 .player strong {
   display: block;
-  font-size: 1rem;
+  font-size: 1.1rem;
   margin-bottom: 8px;
+  font-family: 'Courier New', Courier, monospace;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  color: #fbbf24;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
 }
 
 /* ========= HISTORY ========= */
@@ -270,6 +294,7 @@ button:disabled {
   justify-content: center;
   transition: all 0.2s;
   touch-action: manipulation;
+  position: relative;
 }
 
 .icon-btn.add {
@@ -288,6 +313,22 @@ button:disabled {
   transform: scale(0.95);
 }
 
+/* ========= SPINNER ========= */
+.spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-top-color: white;
+  border-radius: 50%;
+  animation: spin 0.6s linear infinite;
+}
+
+@keyframes spin {
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
 /* ========= BOTTOM ACTIONS ========= */
 .bottom-actions {
   margin-top: 20px;
@@ -300,8 +341,8 @@ button:disabled {
   background: var(--blue);
   border: none;
   border-radius: 12px;
-  padding: 10px;
-  font-size: 0.9rem;
+  padding: 12px;
+  font-size: 0.95rem;
   font-weight: 600;
   color: white;
   cursor: pointer;
@@ -313,10 +354,10 @@ button:disabled {
 .secondary-btn {
   flex: 1;
   background: rgba(255, 255, 255, 0.08);
-  border: none;
+  border: 1px solid rgba(255, 255, 255, 0.15);
   border-radius: 12px;
-  padding: 10px;
-  font-size: 0.9rem;
+  padding: 12px;
+  font-size: 0.95rem;
   font-weight: 600;
   color: #e5e7eb;
   cursor: pointer;
@@ -337,10 +378,54 @@ button:disabled {
 }
 
 /* ========= RESPONSIVE ========= */
-@media (max-width: 480px) {
+@media (max-width: 600px) {
+  body {
+    padding: 12px;
+    align-items: flex-start;
+  }
+  
   .container {
-    padding: 18px;
     max-width: 100%;
+    padding: 18px;
+    margin-top: 12px;
+    max-height: calc(100vh - 24px);
+  }
+  
+  h1 {
+    font-size: 1.4rem;
+    margin-bottom: 16px;
+  }
+  
+  h2 {
+    font-size: 1rem;
+  }
+  
+  .player strong {
+    font-size: 1rem;
+  }
+  
+  button {
+    padding: 11px;
+    font-size: 0.9rem;
+  }
+  
+  .primary-btn,
+  .secondary-btn {
+    padding: 11px;
+    font-size: 0.9rem;
+  }
+  
+  .icon-btn {
+    width: 40px;
+    height: 40px;
+    font-size: 1.1rem;
+  }
+}
+
+@media (max-width: 400px) {
+  .container {
+    padding: 16px;
+    border-radius: 16px;
   }
   
   h1 {
@@ -348,23 +433,57 @@ button:disabled {
   }
   
   h2 {
-    font-size: 1rem;
+    font-size: 0.95rem;
+  }
+  
+  .player {
+    padding: 12px;
+  }
+  
+  .player strong {
+    font-size: 0.95rem;
+  }
+  
+  button {
+    padding: 10px;
+    font-size: 0.85rem;
+  }
+  
+  input {
+    font-size: 0.9rem;
+    padding: 10px 12px;
   }
   
   .primary-btn,
   .secondary-btn {
-    padding: 9px;
+    padding: 10px;
     font-size: 0.85rem;
   }
   
   .icon-btn {
     width: 38px;
     height: 38px;
-    font-size: 1.1rem;
+    font-size: 1rem;
   }
   
-  .icon-text-btn {
-    padding: 6px 10px;
-    font-size: 0.8rem;
+  .history {
+    font-size: 0.7rem;
+  }
+  
+  .bottom-actions {
+    gap: 8px;
+  }
+}
+
+/* ========= LANDSCAPE MOBILE ========= */
+@media (max-height: 600px) and (orientation: landscape) {
+  body {
+    align-items: flex-start;
+  }
+  
+  .container {
+    max-height: calc(100vh - 20px);
+    margin-top: 10px;
+    margin-bottom: 10px;
   }
 }
