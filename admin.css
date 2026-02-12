@@ -56,20 +56,56 @@ body {
 /* ========= CARD ========= */
 .container {
   width: 100%;
-  max-width: 420px;
+  max-width: 480px;
   background: var(--card);
   border-radius: 20px;
   padding: var(--spacing-lg);
   box-shadow:
     0 24px 60px rgba(0, 0, 0, 0.5),
     inset 0 1px 0 rgba(255, 255, 255, 0.04);
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+/* Custom scrollbar */
+.container::-webkit-scrollbar {
+  width: 8px;
+}
+
+.container::-webkit-scrollbar-track {
+  background: var(--surface);
+  border-radius: 10px;
+}
+
+.container::-webkit-scrollbar-thumb {
+  background: var(--muted);
+  border-radius: 10px;
 }
 
 h1 {
   text-align: center;
-  font-size: 1.4rem;
+  font-size: 1.5rem;
   font-weight: 600;
+  margin-bottom: 20px;
+}
+
+h2 {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-bottom: 12px;
+  color: var(--text);
+}
+
+/* ========= SECTION HEADER ========= */
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   margin-bottom: 16px;
+}
+
+.section-header h2 {
+  margin-bottom: 0;
 }
 
 /* ========= INPUTS ========= */
@@ -106,7 +142,7 @@ button {
   cursor: pointer;
   margin-bottom: var(--spacing-sm);
   transition: all 0.2s;
-  touch-action: manipulation; /* Prevent double-tap zoom on mobile */
+  touch-action: manipulation;
 }
 
 button:hover:not(:disabled) {
@@ -123,7 +159,8 @@ button:disabled {
   cursor: not-allowed;
 }
 
-#startGame {
+#startGame,
+#resetGame {
   background: var(--red);
 }
 
@@ -132,13 +169,21 @@ button:disabled {
   background: var(--green);
 }
 
-#go,
 #export {
   background: var(--blue);
 }
 
 .undo {
   background: #7f1d1d;
+}
+
+/* ========= ICON TEXT BUTTON ========= */
+.icon-text-btn {
+  width: auto;
+  padding: 8px 14px;
+  font-size: 0.85rem;
+  margin-bottom: 0;
+  background: var(--red);
 }
 
 /* ========= STATUS ========= */
@@ -149,6 +194,24 @@ button:disabled {
   padding: 8px;
   min-height: 1.5rem;
   transition: color 0.3s;
+  margin-top: 12px;
+}
+
+/* ========= SECTIONS ========= */
+#startSection,
+#playerSection,
+#gameSection {
+  margin-bottom: 16px;
+}
+
+#playerSection {
+  padding-top: 12px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+#gameSection {
+  padding-top: 12px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 /* ========= PLAYER ROW ========= */
@@ -227,7 +290,7 @@ button:disabled {
 
 /* ========= BOTTOM ACTIONS ========= */
 .bottom-actions {
-  margin-top: 24px;
+  margin-top: 20px;
   display: flex;
   gap: 12px;
 }
@@ -244,6 +307,7 @@ button:disabled {
   cursor: pointer;
   transition: all 0.2s;
   touch-action: manipulation;
+  margin-bottom: 0;
 }
 
 .secondary-btn {
@@ -258,6 +322,7 @@ button:disabled {
   cursor: pointer;
   transition: all 0.2s;
   touch-action: manipulation;
+  margin-bottom: 0;
 }
 
 .primary-btn:hover:not(:disabled),
@@ -272,9 +337,18 @@ button:disabled {
 }
 
 /* ========= RESPONSIVE ========= */
-@media (max-width: 420px) {
+@media (max-width: 480px) {
   .container {
     padding: 18px;
+    max-width: 100%;
+  }
+  
+  h1 {
+    font-size: 1.3rem;
+  }
+  
+  h2 {
+    font-size: 1rem;
   }
   
   .primary-btn,
@@ -287,5 +361,10 @@ button:disabled {
     width: 38px;
     height: 38px;
     font-size: 1.1rem;
+  }
+  
+  .icon-text-btn {
+    padding: 6px 10px;
+    font-size: 0.8rem;
   }
 }

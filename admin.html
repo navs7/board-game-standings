@@ -9,11 +9,16 @@
 <body>
 
 <div class="container">
-  <h1>Admin Panel</h1>
+  <h1>Game Admin</h1>
 
-  <button id="startGame" aria-label="Start a new game">Start New Game</button>
+  <!-- START GAME SECTION -->
+  <div id="startSection">
+    <button id="startGame" aria-label="Start a new game">Start New Game</button>
+  </div>
 
+  <!-- ADD PLAYER SECTION -->
   <div id="playerSection" style="display:none;">
+    <h2>Add Players</h2>
     <label for="playerName" class="sr-only">Player Name</label>
     <input 
       id="playerName" 
@@ -24,7 +29,24 @@
       required
     >
     <button id="addPlayer" aria-label="Add player to game">Add Player</button>
-    <button id="go" aria-label="Go to current game view">Go to Current Game</button>
+  </div>
+
+  <!-- CURRENT GAME SECTION -->
+  <div id="gameSection" style="display:none;">
+    <div class="section-header">
+      <h2>Current Game</h2>
+      <button id="resetGame" class="icon-text-btn" aria-label="Start a new game">
+        🔄 New Game
+      </button>
+    </div>
+    
+    <div id="players" role="list" aria-label="Players and scores"></div>
+    
+    <div class="bottom-actions">
+      <button id="export" class="primary-btn" aria-label="Export game results">
+        Export Results
+      </button>
+    </div>
   </div>
 
   <p id="status" role="status" aria-live="polite"></p>
