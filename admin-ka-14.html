@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Panel - Board Game Standings</title>
+  <link rel="stylesheet" href="admin.css">
+</head>
+<body>
+
+<!-- Login Screen -->
+<div id="loginScreen" class="container" style="display:none;">
+  <h1>🔐 Admin Login</h1>
+  
+  <input 
+    id="passwordInput" 
+    type="password" 
+    placeholder="Enter admin password"
+    autocomplete="off"
+  >
+  
+  <button id="loginBtn">Login</button>
+  
+  <p id="loginError" style="color:var(--red);text-align:center;font-size:0.85rem;"></p>
+</div>
+
+<!-- Main Admin Interface -->
+<div id="adminInterface" class="container" style="display:none;">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+    <h1 style="margin-bottom:0;">Game Admin</h1>
+    <button id="logoutBtn" style="width:auto;padding:8px 16px;font-size:0.85rem;background:rgba(255,255,255,0.1);margin-bottom:0;">
+      🚪 Logout
+    </button>
+  </div>
+
+  <!-- START GAME SECTION -->
+  <div id="startSection">
+    <button id="startGame" aria-label="Start a new game">Start New Game</button>
+  </div>
+
+  <!-- ADD PLAYER SECTION -->
+  <div id="playerSection" style="display:none;">
+    <h2>Add Players</h2>
+    <label for="playerName" class="sr-only">Player Name</label>
+    <input 
+      id="playerName" 
+      type="text"
+      placeholder="Player name"
+      aria-label="Enter player name"
+      maxlength="30"
+      required
+    >
+    <button id="addPlayer" aria-label="Add player to game">Add Player</button>
+  </div>
+
+  <!-- CURRENT GAME SECTION -->
+  <div id="gameSection" style="display:none;">
+    <h2>Current Game</h2>
+    
+    <div id="players" role="list" aria-label="Players and scores"></div>
+    
+    <div class="bottom-actions">
+      <button id="resetGame" class="secondary-btn" aria-label="Start a new game">
+        🔄 New Game
+      </button>
+      <button id="export" class="primary-btn" aria-label="Export game results">
+        Export Results
+      </button>
+    </div>
+  </div>
+
+  <p id="status" role="status" aria-live="polite"></p>
+</div>
+
+<script src="config.js"></script>
+<script src="utils.js"></script>
+<script>
+// ========= AUTHENTICATION =========
+const ADMIN_PASSWORD = "your-secure-password-here"; // ⚠️ CHANGE THIS!
+const SESSION_KEY = "adminSession";
+const SESSION_DURATION = 3600000; // 1 hour in milliseconds
+
+const loginScreen = document.getElementById("loginScreen");
+const adminInterface = document.getElementById("adminInterface");
+const passwordInput = document.getElementById("passwordInput");
+const loginBtn = document.getElementById("loginBtn");
+const loginError = document.getElementById("loginError");
+const logoutBtn = document.getElementById("logoutBtn");
+
+// Check if already logged in
+function checkAuth() {
+  const session = localStorage.getItem(SESSION_KEY);
+  
+  if (session) {
+    try {
+      const { timestamp } = JSON.parse(session);
+      const now = Date.now();
+      
+      // Check if session is still valid (within 1 hour)
+      if (now - timestamp < SESSION_DURATION) {
+        showAdminInterface();
+        return;
+      } else {
+        // Session expired
+        logout();
+      }
+    } catch (e) {
+      logout();
+    }
+  }
+  
+  showLoginScreen();
+}
+
+function showLoginScreen() {
+  loginScreen.style.display = "block";
+  adminInterface.style.display = "none";
+  passwordInput.focus();
+}
+
+function showAdminInterface() {
+  loginScreen.style.display = "none";
+  adminInterface.style.display = "block";
+}
+
+function login() {
+  const password = passwordInput.value;
+  
+  if (password === ADMIN_PASSWORD) {
+    // Store session
+    const session = {
+      timestamp: Date.now()
+    };
+    localStorage.setItem(SESSION_KEY, JSON.stringify(session));
+    
+    // Clear password
+    passwordInput.value = "";
+    loginError.textContent = "";
+    
+    // Show admin interface
+    showAdminInterface();
+  } else {
+    loginError.textContent = "❌ Incorrect password";
+    passwordInput.value = "";
+    passwordInput.focus();
+  }
+}
+
+function logout() {
+  localStorage.removeItem(SESSION_KEY);
+  showLoginScreen();
+}
+
+// Event listeners
+loginBtn.onclick = login;
+logoutBtn.onclick = logout;
+
+passwordInput.addEventListener('keypress', (e) => {
+  if (e.key === 'Enter') {
+    login();
+  }
+});
+
+// Auto-logout after session expires
+setInterval(() => {
+  const session = localStorage.getItem(SESSION_KEY);
+  if (session) {
+    try {
+      const { timestamp } = JSON.parse(session);
+      if (Date.now() - timestamp >= SESSION_DURATION) {
+        logout();
+        alert("Session expired. Please login again.");
+      }
+    } catch (e) {
+      logout();
+    }
+  }
+}, 60000); // Check every minute
+
+// Initialize
+checkAuth();
+</script>
+<script src="admin.js"></script>
+</body>
+</html>
