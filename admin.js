@@ -13,7 +13,6 @@ const playersContainer = document.getElementById("players");
 // ========= STATE =========
 let isProcessing = false;
 let playerStates = {}; // Track individual player button states
-let autoRefreshInterval = null;
 
 // ========= START NEW GAME =========
 startGameBtn.onclick = async () => {
@@ -38,12 +37,6 @@ startGameBtn.onclick = async () => {
     statusEl.textContent = "✅ New game started! Add players below.";
     statusEl.style.color = "var(--green)";
     playerNameInput.focus();
-    
-    // Stop auto-refresh if running
-    if (autoRefreshInterval) {
-      clearInterval(autoRefreshInterval);
-      autoRefreshInterval = null;
-    }
   } catch (error) {
     statusEl.textContent = "❌ Failed to start game. Please try again.";
     statusEl.style.color = "var(--red)";
@@ -84,11 +77,6 @@ addPlayerBtn.onclick = async () => {
     
     // Show game section after first player is added
     gameSection.style.display = "block";
-    
-    // Start auto-refresh
-    if (!autoRefreshInterval) {
-      autoRefreshInterval = setInterval(loadPlayers, REFRESH_INTERVAL);
-    }
   } catch (error) {
     statusEl.textContent = `❌ Failed to add ${validation.value}`;
     statusEl.style.color = "var(--red)";
@@ -188,12 +176,6 @@ async function loadPlayers() {
 
 // ========= RENDER PLAYERS =========
 function renderPlayers(data) {
-  // Store current focus and values
-  const activeElement = document.activeElement;
-  const isInputFocused = activeElement && activeElement.tagName === 'INPUT' && activeElement.type === 'number';
-  const focusedPlayer = isInputFocused ? activeElement.closest('.player')?.getAttribute('data-player') : null;
-  const focusedValue = isInputFocused ? activeElement.value : null;
-
   // Get existing player cards
   const existingCards = {};
   playersContainer.querySelectorAll('.player').forEach(card => {
@@ -202,7 +184,7 @@ function renderPlayers(data) {
   });
 
   // Update or create player cards
-  data.forEach((p, index) => {
+  data.forEach(p => {
     const playerKey = p.Player;
     if (!playerStates[playerKey]) {
       playerStates[playerKey] = { isAdding: false, isUndoing: false };
@@ -211,7 +193,7 @@ function renderPlayers(data) {
     let div = existingCards[playerKey];
     
     if (div) {
-      // Update existing card - only update history, don't touch inputs
+      // Update existing card - only update history, preserve inputs
       const historyEl = div.querySelector('.history');
       if (historyEl) {
         historyEl.textContent = p.History || "No scores yet";
@@ -230,20 +212,6 @@ function renderPlayers(data) {
   Object.values(existingCards).forEach(card => {
     card.remove();
   });
-
-  // Restore focus and value if input was focused
-  if (focusedPlayer && focusedValue !== null) {
-    const playerCard = playersContainer.querySelector(`[data-player="${focusedPlayer}"]`);
-    if (playerCard) {
-      const input = playerCard.querySelector('input');
-      if (input) {
-        input.value = focusedValue;
-        input.focus();
-        // Restore cursor position to end
-        input.setSelectionRange(input.value.length, input.value.length);
-      }
-    }
-  }
 }
 
 // ========= CREATE PLAYER CARD =========
@@ -323,12 +291,6 @@ function createPlayerCard(p, playerKey) {
       
       input.value = "";
       await loadPlayers();
-      
-      // Re-focus the input for quick entry
-      const newDiv = playersContainer.querySelector(`[data-player="${playerKey}"]`);
-      if (newDiv) {
-        newDiv.querySelector("input").focus();
-      }
     } catch (error) {
       statusEl.textContent = `❌ Failed to add score`;
       statusEl.style.color = "var(--red)";
@@ -412,27 +374,9 @@ window.addEventListener('DOMContentLoaded', async () => {
       gameSection.style.display = "block";
       
       await loadPlayers();
-      
-      // Start auto-refresh
-      autoRefreshInterval = setInterval(loadPlayers, REFRESH_INTERVAL);
     }
   } catch (error) {
     // No game in progress or error - show start screen
     console.log('No existing game found');
-  }
-});
-
-// ========= CLEANUP =========
-// Stop auto-refresh when page is hidden
-document.addEventListener('visibilitychange', () => {
-  if (document.hidden && autoRefreshInterval) {
-    clearInterval(autoRefreshInterval);
-    autoRefreshInterval = null;
-  } else if (!document.hidden && gameSection.style.display !== "none") {
-    // Resume auto-refresh if game section is visible
-    if (!autoRefreshInterval) {
-      loadPlayers(); // Immediate refresh
-      autoRefreshInterval = setInterval(loadPlayers, REFRESH_INTERVAL);
-    }
   }
 });
