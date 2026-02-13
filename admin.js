@@ -176,6 +176,12 @@ async function loadPlayers() {
 
 // ========= RENDER PLAYERS =========
 function renderPlayers(data) {
+  // Clear any loading/error messages first
+  const loadingMsg = playersContainer.querySelector('p');
+  if (loadingMsg) {
+    loadingMsg.remove();
+  }
+  
   // Get existing player cards
   const existingCards = {};
   playersContainer.querySelectorAll('.player').forEach(card => {
@@ -290,6 +296,11 @@ function createPlayerCard(p, playerKey) {
       statusEl.style.color = "var(--green)";
       
       input.value = "";
+      
+      // Remove loading state before reloading
+      playerCard.classList.remove('loading');
+      addBtn.innerHTML = originalContent;
+      
       await loadPlayers();
     } catch (error) {
       statusEl.textContent = `❌ Failed to add score`;
